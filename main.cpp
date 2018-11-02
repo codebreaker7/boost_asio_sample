@@ -1,6 +1,12 @@
 #include <iostream>
+#include <map>
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
+#include <boost/thread.hpp>
+#include <boost/bind.hpp>
+#include "basic_client.h"
+#include "sync_tcp_client.h"
+#include "sync_tcp_server.h"
 
 using namespace std;
 using namespace boost::asio;
@@ -9,33 +15,14 @@ using namespace boost::asio::ip;
 int main()
 {
     try {
-        io_context context;
-        boost::system::error_code ec;
-        tcp::socket sync_socket(context);
-        boost::array<char, 1024> readbuf;
-
-        tcp::endpoint ep(boost::asio::ip::address::from_string("127.0.0.1"), 33333);
-        sync_socket.connect(ep, ec);
-        if (ec) {
-            cerr << "Problem with connection" << endl;
-            return 1;
-        }
-        // write start message
-        sync_socket.write_some(buffer("HELLO"), ec);
-        if (ec) {
-            cerr << "Cannot write data!" << endl;
-            return 1;
-        }
-        // read response data
-        sync_socket.read_some(buffer(readbuf));
-        cout << readbuf.data();
-        while (sync_socket.available()) {
-            sync_socket.read_some(buffer(readbuf));
-            cout << readbuf.data();
-        }
-        cout << endl;
-        cout << "Session successfully closed" << endl;
-        sync_socket.close();
+        io_context client_context;
+        io_context server_context;
+        basic_client * client = new sync_tcp_client(client_context);
+        basic_server * server = new sync_tcp_server(server_context);
+        //server->run_server();
+        boost::thread t(boost::bind(&basic_server::run_server, server));
+        client->do_work();
+        t.join();
     }
     catch (exception& e) {
         cerr << e.what() << endl;
