@@ -1,4 +1,5 @@
 #include <iostream>
+#include <boost/array.hpp>
 #include "sync_tcp_client.h"
 
 using namespace std;

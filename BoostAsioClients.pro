@@ -8,7 +8,8 @@ SOURCES += main.cpp \
     basic_client.cpp \
     sync_tcp_client.cpp \
     basic_server.cpp \
-    sync_tcp_server.cpp
+    sync_tcp_server.cpp \
+    async_tcp_client.cpp
 
 
 unix|win32: LIBS += -lboost_system -lpthread
@@ -17,6 +18,7 @@ HEADERS += \
     basic_client.h \
     sync_tcp_client.h \
     basic_server.h \
-    sync_tcp_server.h
+    sync_tcp_server.h \
+    async_tcp_client.h
 
 unix|win32: LIBS += -lboost_thread

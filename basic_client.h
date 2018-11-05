@@ -10,7 +10,7 @@ class basic_client
 public:
     basic_client(io_context &context);
     virtual void do_work() = 0;
-private:
+protected:
     io_context& ctx;
 };
 
